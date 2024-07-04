@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 
-import cookies from 'js-cookie';
-
+// import cookies from 'js-cookie';
 import Footer from '@/components/Footer';
 import NavBar from '@/components/NavBar';
 import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
@@ -22,8 +21,8 @@ const Home = () => {
     },
   ];
 
-  console.log(cookies.get('accessToken'));
-  console.log(cookies.get('refreshToken'));
+  // console.log(cookies.get('accessToken'));
+  // console.log(cookies.get('refreshToken'));
 
   return (
     <div>
