@@ -58,7 +58,6 @@ const LoginForm: React.FC = () => {
 
       // console.log('Data:', data.data.token);
       setAccessToken(data.data.token);
-
       router.push('/');
     }
   }, [isSuccess, router, setAccessToken, data]);
