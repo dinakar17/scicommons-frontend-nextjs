@@ -22,6 +22,25 @@ body {
     rgb(var(--background-start-rgb)); */
 }
 
+.gyroSlider-carousel {
+  position: relative;
+  /* height: 1rem; */
+  perspective: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  top: 5%;
+}
+
+.gyroSlider-container {
+  position: absolute;
+  transform: rotateY(calc(var(--offset) * 50deg)) scaleY(calc(1 + var(--abs-offset) * -0.2))
+    translateZ(calc(var(--abs-offset) * -30rem)) translateX(calc(var(--direction) * -8rem));
+  filter: blur(calc(var(--abs-offset) * 0.5rem));
+  transition: all 0.3s ease-out;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -292,4 +311,12 @@ body {
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+.toastClass {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--Common-Minimal);
+  color: var(--Text-Primary);
+  background-color: var(--Common-CardBackground);
 }

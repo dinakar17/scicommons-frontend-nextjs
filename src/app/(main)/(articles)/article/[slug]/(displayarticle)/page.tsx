@@ -29,19 +29,19 @@ const statsData = {
 
 const articlesData = [
   {
-    imageUrl: 'https://source.unsplash.com/random/400x400',
+    imageUrl: 'https://picsum.photos/200/201',
     title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     likes: '1.1k',
     reviews: '2k',
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/400x401',
+    imageUrl: 'https://picsum.photos/200/201',
     title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     likes: '1.1k',
     reviews: '2k',
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/400x402',
+    imageUrl: 'https://picsum.photos/200/202',
     title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     likes: '1.1k',
     reviews: '2k',
@@ -50,11 +50,10 @@ const articlesData = [
 
 const ArticleDisplayPage = ({ params }: { params: { slug: string } }) => {
   const accessToken = useAuthStore((state) => state.accessToken);
-  const axiosConfig = { headers: { Authorization: `Bearer ${accessToken}` } };
 
   const { data, error, isPending } = useArticlesApiGetArticle(params.slug, {
     query: { enabled: !!accessToken },
-    axios: axiosConfig,
+    request: { headers: { Authorization: `Bearer ${accessToken}` } },
   });
 
   const {
@@ -65,7 +64,10 @@ const ArticleDisplayPage = ({ params }: { params: { slug: string } }) => {
   } = useArticlesApiReviewGetReviews(
     data?.data.id || 0,
     {},
-    { query: { enabled: !!accessToken && !!data }, axios: axiosConfig }
+    {
+      query: { enabled: !!accessToken && !!data },
+      request: { headers: { Authorization: `Bearer ${accessToken}` } },
+    }
   );
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseurl = 'http://127.0.0.1:8000/api/post';
+const postEndpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/post`;
 
 interface configType {
   headers: {
@@ -9,24 +9,24 @@ interface configType {
 }
 
 export const fetchAllPosts = async (hashtag: string | null, config: configType) => {
-  const url = hashtag ? `${baseurl}/all?hashtag=${hashtag}` : `${baseurl}/all`;
+  const url = hashtag ? `${postEndpoint}/all?hashtag=${hashtag}` : `${postEndpoint}/all`;
   const { data } = await axios.get(url, config);
   return data;
 };
 
 export const getPostById = async (postId: string | string[], config: configType) => {
-  const { data } = await axios.get(`${baseurl}/${postId}`, config);
+  const { data } = await axios.get(`${postEndpoint}/${postId}`, config);
   return data;
 };
 
 export const getPostByUser = async (username: any, config: configType) => {
-  const { data } = await axios.get(`${baseurl}/user/${username}`, config);
+  const { data } = await axios.get(`${postEndpoint}/user/${username}`, config);
   return data;
 };
 
 export const createPost = async (body: string, hashtags: string[], config: configType) => {
   const { data } = await axios.post(
-    `${baseurl}/create`,
+    `${postEndpoint}/create`,
     { body: body, hashtags: hashtags },
     config
   );
@@ -40,7 +40,7 @@ export const replyToComment = async (
   config: configType
 ) => {
   const { data } = await axios.post(
-    `${baseurl}/${postId}/comments/${commentId}/reply`,
+    `${postEndpoint}/${postId}/comments/${commentId}/reply`,
     formData,
     config
   );
@@ -52,31 +52,31 @@ export const postComment = async (
   commentData: any,
   config: configType
 ) => {
-  const { data } = await axios.post(`${baseurl}/${postId}/comment`, commentData, config);
+  const { data } = await axios.post(`${postEndpoint}/${postId}/comment`, commentData, config);
   return data;
 };
 
 export const likePost = async (postId: string | string[], config: configType) => {
-  const { data } = await axios.get(`${baseurl}/${postId}/like`, config);
+  const { data } = await axios.get(`${postEndpoint}/${postId}/like`, config);
   return data;
 };
 
 export const unlikePost = async (postId: string | string[], config: configType) => {
-  const { data } = await axios.get(`${baseurl}/${postId}/unlike`, config);
+  const { data } = await axios.get(`${postEndpoint}/${postId}/unlike`, config);
   return data;
 };
 
 export const likeComment = async (commentId: string | string[], config: configType) => {
-  const { data } = await axios.get(`${baseurl}/comment/${commentId}/like`, config);
+  const { data } = await axios.get(`${postEndpoint}/comment/${commentId}/like`, config);
   return data;
 };
 
 export const unlikeComment = async (commentId: string | string[], config: configType) => {
-  const { data } = await axios.get(`${baseurl}/comment/${commentId}/unlike`, config);
+  const { data } = await axios.get(`${postEndpoint}/comment/${commentId}/unlike`, config);
   return data;
 };
 
 export const getHastags = async (config: configType) => {
-  const { data } = await axios.get(`${baseurl}/get/hashtags`, config);
+  const { data } = await axios.get(`${postEndpoint}/get/hashtags`, config);
   return data;
 };

@@ -82,7 +82,7 @@ const NavBar: React.FC = () => {
           ))}
         </ul>
         {isAuthenticated ? (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <CreateDropdown />
             <Link href="/notifications">
               <Bell className="h-9 w-9 cursor-pointer rounded-full p-2 text-text-secondary hover:bg-common-minimal" />
@@ -111,8 +111,9 @@ const CreateDropdown: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center rounded-full bg-functional-green px-4 py-2 text-sm text-neutral-0">
-          <IconPlus className="mr-1 size-4 text-neutral-0" /> Create
+        <button className="flex items-center rounded-full bg-functional-green px-2 py-2 text-sm text-neutral-0 sm:px-4">
+          <IconPlus className="size-4 text-neutral-0" />
+          <span className="ml-1 hidden text-sm text-neutral-0 sm:block">Create</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -155,7 +156,7 @@ const ProfileDropdown: React.FC = () => {
           alt="Profile"
           width={40}
           height={40}
-          className="cursor-pointer rounded-full border-2 border-gray-300"
+          className="cursor-pointer rounded-full"
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -182,7 +183,7 @@ const ProfileDropdown: React.FC = () => {
           </div>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <button onClick={handleLogout} className="flex items-center">
+          <button onClick={handleLogout} className="flex items-center text-functional-red">
             <LogOut size={16} className="mr-2" />
             Logout
           </button>

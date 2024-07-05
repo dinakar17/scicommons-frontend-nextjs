@@ -1,6 +1,8 @@
 // import { faker } from '@faker-js/faker';
 import { defineConfig } from 'orval';
 
+const backend_url = 'https://scicommons-backend-revamp.onrender.com'; // Change this to your backend URL
+
 export default defineConfig({
   backend: {
     output: {
@@ -8,9 +10,12 @@ export default defineConfig({
       target: './src/api/generated.ts',
       schemas: './src/api/schemas',
       client: 'react-query',
-      baseUrl: 'http://localhost:8000',
       //   mock: true,
       override: {
+        mutator: {
+          path: './src/api/custom-instance.ts',
+          name: 'customInstance',
+        },
         query: {
           useQuery: true,
           // useSuspenseQuery: true,
@@ -21,7 +26,7 @@ export default defineConfig({
       },
     },
     input: {
-      target: 'http://localhost:8000/api/openapi.json',
+      target: `${backend_url}/api/openapi.json`,
     },
     hooks: {
       afterAllFilesWrite: 'prettier --write',

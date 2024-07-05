@@ -14,9 +14,9 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
-import axios from 'axios';
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+import { customInstance } from '.././custom-instance';
+import type { BodyType, ErrorType } from '.././custom-instance';
 import type {
   ArticlesApiReviewGetReviewsParams,
   CreateReviewDetails,
@@ -26,33 +26,33 @@ import type {
   ReviewResponseSchema,
 } from '.././schemas';
 
+type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
+
 /**
  * @summary Get Reviews
  */
 export const articlesApiReviewGetReviews = (
   articleId: number,
   params?: ArticlesApiReviewGetReviewsParams,
-  options?: AxiosRequestConfig
-): Promise<AxiosResponse<PaginatedReviewResponse>> => {
-  return axios.get(`http://localhost:8000/api/articles/articles/${articleId}/reviews/`, {
-    ...options,
-    params: { ...params, ...options?.params },
-  });
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<PaginatedReviewResponse>(
+    { url: `/api/articles/articles/${articleId}/reviews/`, method: 'GET', params, signal },
+    options
+  );
 };
 
 export const getArticlesApiReviewGetReviewsQueryKey = (
   articleId: number,
   params?: ArticlesApiReviewGetReviewsParams
 ) => {
-  return [
-    `http://localhost:8000/api/articles/articles/${articleId}/reviews/`,
-    ...(params ? [params] : []),
-  ] as const;
+  return [`/api/articles/articles/${articleId}/reviews/`, ...(params ? [params] : [])] as const;
 };
 
 export const getArticlesApiReviewGetReviewsQueryOptions = <
   TData = Awaited<ReturnType<typeof articlesApiReviewGetReviews>>,
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
 >(
   articleId: number,
   params?: ArticlesApiReviewGetReviewsParams,
@@ -60,17 +60,17 @@ export const getArticlesApiReviewGetReviewsQueryOptions = <
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof articlesApiReviewGetReviews>>, TError, TData>
     >;
-    axios?: AxiosRequestConfig;
+    request?: SecondParameter<typeof customInstance>;
   }
 ) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
     queryOptions?.queryKey ?? getArticlesApiReviewGetReviewsQueryKey(articleId, params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof articlesApiReviewGetReviews>>> = ({
     signal,
-  }) => articlesApiReviewGetReviews(articleId, params, { signal, ...axiosOptions });
+  }) => articlesApiReviewGetReviews(articleId, params, requestOptions, signal);
 
   return { queryKey, queryFn, enabled: !!articleId, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof articlesApiReviewGetReviews>>,
@@ -82,14 +82,14 @@ export const getArticlesApiReviewGetReviewsQueryOptions = <
 export type ArticlesApiReviewGetReviewsQueryResult = NonNullable<
   Awaited<ReturnType<typeof articlesApiReviewGetReviews>>
 >;
-export type ArticlesApiReviewGetReviewsQueryError = AxiosError<Message>;
+export type ArticlesApiReviewGetReviewsQueryError = ErrorType<Message>;
 
 /**
  * @summary Get Reviews
  */
 export const useArticlesApiReviewGetReviews = <
   TData = Awaited<ReturnType<typeof articlesApiReviewGetReviews>>,
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
 >(
   articleId: number,
   params?: ArticlesApiReviewGetReviewsParams,
@@ -97,7 +97,7 @@ export const useArticlesApiReviewGetReviews = <
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof articlesApiReviewGetReviews>>, TError, TData>
     >;
-    axios?: AxiosRequestConfig;
+    request?: SecondParameter<typeof customInstance>;
   }
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
   const queryOptions = getArticlesApiReviewGetReviewsQueryOptions(articleId, params, options);
@@ -113,38 +113,46 @@ export const useArticlesApiReviewGetReviews = <
  * @summary Create Review
  */
 export const articlesApiReviewCreateReview = (
-  createReviewDetails: CreateReviewDetails,
-  options?: AxiosRequestConfig
-): Promise<AxiosResponse<ReviewResponseSchema>> => {
-  return axios.post(`http://localhost:8000/api/articles/reviews/`, createReviewDetails, options);
+  createReviewDetails: BodyType<CreateReviewDetails>,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<ReviewResponseSchema>(
+    {
+      url: `/api/articles/reviews/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: createReviewDetails,
+    },
+    options
+  );
 };
 
 export const getArticlesApiReviewCreateReviewMutationOptions = <
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof articlesApiReviewCreateReview>>,
     TError,
-    { data: CreateReviewDetails },
+    { data: BodyType<CreateReviewDetails> },
     TContext
   >;
-  axios?: AxiosRequestConfig;
+  request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof articlesApiReviewCreateReview>>,
   TError,
-  { data: CreateReviewDetails },
+  { data: BodyType<CreateReviewDetails> },
   TContext
 > => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof articlesApiReviewCreateReview>>,
-    { data: CreateReviewDetails }
+    { data: BodyType<CreateReviewDetails> }
   > = (props) => {
     const { data } = props ?? {};
 
-    return articlesApiReviewCreateReview(data, axiosOptions);
+    return articlesApiReviewCreateReview(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -153,27 +161,27 @@ export const getArticlesApiReviewCreateReviewMutationOptions = <
 export type ArticlesApiReviewCreateReviewMutationResult = NonNullable<
   Awaited<ReturnType<typeof articlesApiReviewCreateReview>>
 >;
-export type ArticlesApiReviewCreateReviewMutationBody = CreateReviewDetails;
-export type ArticlesApiReviewCreateReviewMutationError = AxiosError<Message>;
+export type ArticlesApiReviewCreateReviewMutationBody = BodyType<CreateReviewDetails>;
+export type ArticlesApiReviewCreateReviewMutationError = ErrorType<Message>;
 
 /**
  * @summary Create Review
  */
 export const useArticlesApiReviewCreateReview = <
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof articlesApiReviewCreateReview>>,
     TError,
-    { data: CreateReviewDetails },
+    { data: BodyType<CreateReviewDetails> },
     TContext
   >;
-  axios?: AxiosRequestConfig;
+  request?: SecondParameter<typeof customInstance>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof articlesApiReviewCreateReview>>,
   TError,
-  { data: CreateReviewDetails },
+  { data: BodyType<CreateReviewDetails> },
   TContext
 > => {
   const mutationOptions = getArticlesApiReviewCreateReviewMutationOptions(options);
@@ -185,42 +193,46 @@ export const useArticlesApiReviewCreateReview = <
  */
 export const articlesApiReviewEditReview = (
   reviewId: number,
-  reviewEditSchema: ReviewEditSchema,
-  options?: AxiosRequestConfig
-): Promise<AxiosResponse<ReviewResponseSchema>> => {
-  return axios.put(
-    `http://localhost:8000/api/articles/reviews/${reviewId}/`,
-    reviewEditSchema,
+  reviewEditSchema: BodyType<ReviewEditSchema>,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<ReviewResponseSchema>(
+    {
+      url: `/api/articles/reviews/${reviewId}/`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: reviewEditSchema,
+    },
     options
   );
 };
 
 export const getArticlesApiReviewEditReviewMutationOptions = <
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof articlesApiReviewEditReview>>,
     TError,
-    { reviewId: number; data: ReviewEditSchema },
+    { reviewId: number; data: BodyType<ReviewEditSchema> },
     TContext
   >;
-  axios?: AxiosRequestConfig;
+  request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof articlesApiReviewEditReview>>,
   TError,
-  { reviewId: number; data: ReviewEditSchema },
+  { reviewId: number; data: BodyType<ReviewEditSchema> },
   TContext
 > => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof articlesApiReviewEditReview>>,
-    { reviewId: number; data: ReviewEditSchema }
+    { reviewId: number; data: BodyType<ReviewEditSchema> }
   > = (props) => {
     const { reviewId, data } = props ?? {};
 
-    return articlesApiReviewEditReview(reviewId, data, axiosOptions);
+    return articlesApiReviewEditReview(reviewId, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -229,27 +241,27 @@ export const getArticlesApiReviewEditReviewMutationOptions = <
 export type ArticlesApiReviewEditReviewMutationResult = NonNullable<
   Awaited<ReturnType<typeof articlesApiReviewEditReview>>
 >;
-export type ArticlesApiReviewEditReviewMutationBody = ReviewEditSchema;
-export type ArticlesApiReviewEditReviewMutationError = AxiosError<Message>;
+export type ArticlesApiReviewEditReviewMutationBody = BodyType<ReviewEditSchema>;
+export type ArticlesApiReviewEditReviewMutationError = ErrorType<Message>;
 
 /**
  * @summary Edit Review
  */
 export const useArticlesApiReviewEditReview = <
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof articlesApiReviewEditReview>>,
     TError,
-    { reviewId: number; data: ReviewEditSchema },
+    { reviewId: number; data: BodyType<ReviewEditSchema> },
     TContext
   >;
-  axios?: AxiosRequestConfig;
+  request?: SecondParameter<typeof customInstance>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof articlesApiReviewEditReview>>,
   TError,
-  { reviewId: number; data: ReviewEditSchema },
+  { reviewId: number; data: BodyType<ReviewEditSchema> },
   TContext
 > => {
   const mutationOptions = getArticlesApiReviewEditReviewMutationOptions(options);
@@ -261,13 +273,16 @@ export const useArticlesApiReviewEditReview = <
  */
 export const articlesApiReviewDeleteReview = (
   reviewId: number,
-  options?: AxiosRequestConfig
-): Promise<AxiosResponse<Message>> => {
-  return axios.delete(`http://localhost:8000/api/articles/reviews/${reviewId}/`, options);
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<Message>(
+    { url: `/api/articles/reviews/${reviewId}/`, method: 'DELETE' },
+    options
+  );
 };
 
 export const getArticlesApiReviewDeleteReviewMutationOptions = <
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -276,14 +291,14 @@ export const getArticlesApiReviewDeleteReviewMutationOptions = <
     { reviewId: number },
     TContext
   >;
-  axios?: AxiosRequestConfig;
+  request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof articlesApiReviewDeleteReview>>,
   TError,
   { reviewId: number },
   TContext
 > => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof articlesApiReviewDeleteReview>>,
@@ -291,7 +306,7 @@ export const getArticlesApiReviewDeleteReviewMutationOptions = <
   > = (props) => {
     const { reviewId } = props ?? {};
 
-    return articlesApiReviewDeleteReview(reviewId, axiosOptions);
+    return articlesApiReviewDeleteReview(reviewId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -301,13 +316,13 @@ export type ArticlesApiReviewDeleteReviewMutationResult = NonNullable<
   Awaited<ReturnType<typeof articlesApiReviewDeleteReview>>
 >;
 
-export type ArticlesApiReviewDeleteReviewMutationError = AxiosError<Message>;
+export type ArticlesApiReviewDeleteReviewMutationError = ErrorType<Message>;
 
 /**
  * @summary Delete Review
  */
 export const useArticlesApiReviewDeleteReview = <
-  TError = AxiosError<Message>,
+  TError = ErrorType<Message>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -316,7 +331,7 @@ export const useArticlesApiReviewDeleteReview = <
     { reviewId: number },
     TContext
   >;
-  axios?: AxiosRequestConfig;
+  request?: SecondParameter<typeof customInstance>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof articlesApiReviewDeleteReview>>,
   TError,

@@ -65,7 +65,7 @@ const FormInput = <TFieldValues extends FieldValues>({
           : undefined,
     }),
     className: clsx(
-      'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-brand focus:border-brand sm:text-sm',
+      'mt-1 block w-full text-text-primary px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-brand focus:border-brand sm:text-sm',
       error && !readOnly ? 'border-red-500' : 'border-gray-300'
     ),
   };

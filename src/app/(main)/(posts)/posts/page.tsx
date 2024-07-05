@@ -34,7 +34,7 @@ const Posts = () => {
   }, [hashtag]);
 
   return (
-    <div className="container relative mx-auto min-h-[calc(100vh-64px)] space-y-4 bg-common-background px-4 py-8 md:px-16">
+    <div className="container relative min-h-[calc(100vh-64px)] w-full space-y-4 bg-common-background px-4 py-8 md:px-16">
       <div className="flex w-full flex-row items-center justify-between pb-2">
         <span className="text-4xl font-bold text-text-primary">Posts</span>
         <Button
