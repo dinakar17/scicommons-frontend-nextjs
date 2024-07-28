@@ -24,6 +24,10 @@ const nextConfig = withPWA({
         protocol: 'https',
         hostname: 'picsum.photos',
       },
+      {
+        protocol: 'https',
+        hostname: 'incf.s3.amazonaws.com',
+      },
     ],
   },
 });
